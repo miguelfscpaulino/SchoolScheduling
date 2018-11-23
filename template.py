@@ -22,21 +22,41 @@ class Problem(csp.CSP):
         # l = [line.rstrip('\n') for line in s.readlines()]
         # mat = [list(map(int, list(i))) for i in l]
         # aux = [(mat[x][y], coord2ind(y, x, dim)) for x in range(dim) for y in range(dim) if mat[x][y] != 0]
+
+      
+
         for line in fh.readlines():
-            l = line.rstrip('\n').replace(',', ' ').split(' ')
+            l = line.rstrip('\n').split(' ')
 
-            # if l[0] == 'T':
-            #     for elem in l[1:end]:
-            #         e = elem.split(',')
+            if l[0] == 'T':
+            	T = [(item.split(',')[0], int(item.split(',')[1])) for item in l[1:]]            
 
-            print(l)
+            elif l[0] == 'R':
+            	R = l[1:]
+
+            elif l[0] == 'S':
+            	S = l[1:]
+
+            elif l[0] == 'W':
+            	W = [(item.split(',')[0], item.split(',')[1], int(item.split(',')[2])) for item in l[1:]] 
+            	
+            elif l[0] == 'A':       
+            	A = [(item.split(',')[0], item.split(',')[1]) for item in l[1:]]  
+       	
+           
+        	
+        print(T)
+        print(R)
+        print(S)
+        print(W)
+        print(A)
 
 
-        super().__init__(variables, domains, graph, constraints_function)
+        #super().__init__(variables, domains, graph, constraints_function)
 
-        def dump_solution(self, fh):
-        # Place here your code to write solution to opened file object fh
-            pass
+    def dump_solution(self, fh):
+    # Place here your code to write solution to opened file object fh
+        pass
 
 def solve(input_file, output_file):
     p = Problem(input_file)
