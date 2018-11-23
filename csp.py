@@ -373,7 +373,7 @@ def make_arc_consistent(Xj, Xk, csp):
                 # Found a consistent assignment for val1, keep it
                 keep = True
                 break
-        
+
         if not keep:
             # Remove val1
             csp.prune(Xj, val1, None)
