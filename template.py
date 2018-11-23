@@ -23,7 +23,7 @@ class Problem(csp.CSP):
         # mat = [list(map(int, list(i))) for i in l]
         # aux = [(mat[x][y], coord2ind(y, x, dim)) for x in range(dim) for y in range(dim) if mat[x][y] != 0]
         for line in fh.readlines():
-            l = line.replace(',', ' ').split(' ')
+            l = line.rstrip('\n').replace(',', ' ').split(' ')
 
             # if l[0] == 'T':
             #     for elem in l[1:end]:
