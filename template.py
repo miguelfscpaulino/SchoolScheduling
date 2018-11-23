@@ -6,11 +6,25 @@ class Problem(csp.CSP):
         # Place here your code to load problem from opened file object fh and
         # set variables, domains, graph, and constraint_function accordingly
         super().__init__(variables, domains, graph, constraints_function)
-        
+
     def dump_solution(self, fh):
         # Place here your code to write solution to opened file object fh
-        
+
 def solve(input_file, output_file):
     p = Problem(input_file)
     # Place here your code that calls function csp.backtracking_search(self, ...)
     p.dump_solution(output_file)
+
+if __name__ == '__main__':
+
+    try:
+        inputfileID = open(sys.argv[1], "r")
+        outputfileID = open(sys.argv[2], "w")
+    except IndexError:
+        print('Error: Filenames not provided or invalid open/read')
+        sys.exit()
+    except IOError:
+        print("Error: couldn't open provided files')
+        sys.exit()
+
+    solve(inputfileID, outputfileID)
