@@ -5,6 +5,12 @@ Second project for the Artificial Intelligent course in Instituto Superior Técn
 ## Objective:
 	Formulate the scheduling of classes as a CSP and solve it using an existing backtracking algorithm implementation
 
+## TODO:
+	Everything
+
+## Notes:
+	- Otimization idea: loop em que se adiciona outra constraint que é o tempo da ultima aula do dia e vai-se reduzindo/aumentando até arranjar solução válida/óptima.
+
 ## Team
 	Francisco Costa
 	João Mak Duarte
