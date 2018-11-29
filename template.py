@@ -23,35 +23,52 @@ class Problem(csp.CSP):
         # mat = [list(map(int, list(i))) for i in l]
         # aux = [(mat[x][y], coord2ind(y, x, dim)) for x in range(dim) for y in range(dim) if mat[x][y] != 0]
 
-      
 
+
+        variables = []
         for line in fh.readlines():
             l = line.rstrip('\n').split(' ')
 
-            if l[0] == 'T':
-            	T = [(item.split(',')[0], int(item.split(',')[1])) for item in l[1:]]            
+            # if l[0] == 'T':
+            # 	# T = [(item.split(',')[0], int(item.split(',')[1])) for item in l[1:]]
+            #     T = l[1:]
+            #
+            # elif l[0] == 'R':
+            # 	R = l[1:]
+            #
+            # elif l[0] == 'S':
+            # 	S = l[1:]
 
-            elif l[0] == 'R':
-            	R = l[1:]
-
-            elif l[0] == 'S':
-            	S = l[1:]
+            if l[0] == 'T' or l[0] == 'R' or l[0] == 'S':
+                variables.extend(l[1:])
 
             elif l[0] == 'W':
-            	W = [(item.split(',')[0], item.split(',')[1], int(item.split(',')[2])) for item in l[1:]] 
-            	
-            elif l[0] == 'A':       
-            	A = [(item.split(',')[0], item.split(',')[1]) for item in l[1:]]  
-       	
-           
-        	
-        print(T)
-        print(R)
-        print(S)
-        print(W)
-        print(A)
+            	W = [(item.split(',')[0], item.split(',')[1], int(item.split(',')[2])) for item in l[1:]]
+                # W = l[1:]
 
+            elif l[0] == 'A':
+            	A = [(item.split(',')[0], item.split(',')[1]) for item in l[1:]]
 
+        # variables = T + R + S
+
+        domains = {}
+
+        for item in A:
+            if item[0] in variables:
+                if item[0] not in domains:
+                    domains[item[0]] = list()
+                for i in range(0,len(W)):
+                    if W[i][0] == item[1]:
+                        domains[item[0]].append(i)
+
+        for var in variables:
+            if var not in domains:
+                domains[var] = list(range(0, len(W)))
+
+        print('W: ' + str(W))
+        print('A: ' + str(A))
+        print('vars: ' + str(variables))
+        print('domains: ' + str(domains))
         #super().__init__(variables, domains, graph, constraints_function)
 
     def dump_solution(self, fh):

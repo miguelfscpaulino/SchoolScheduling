@@ -715,12 +715,21 @@ def Zebra():
                 (A in Smokes and B in Smokes)):
             return not same
         raise Exception('error')
+
+
+    print('\nvars:\n' + str(variables))
+    print('\ndomains:\n' + str(domains))
+    print('\nneighbors:\n' + str(neighbors))
+    print('\nzebra_constraint:\n' + str(zebra_constraint))
     return CSP(variables, domains, neighbors, zebra_constraint)
 
 
-def solve_zebra(algorithm=min_conflicts, **args):
+# def solve_zebra(algorithm=min_conflicts, **args):
+def solve_zebra(algorithm=min_conflicts):
     z = Zebra()
-    ans = algorithm(z, **args)
+    # ans = algorithm(z, **args)
+    ans = algorithm(z)
+    print('ans:' + str(ans))
     for h in range(1, 6):
         print('House', h, end=' ')
         for (var, val) in ans.items():
