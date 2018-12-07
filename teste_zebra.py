@@ -3,5 +3,4 @@ import sys
 
 if __name__ == '__main__':
 
-    # A = csp.Zebra()
-    csp.solve_zebra()
+    csp.solve_zebra(algorithm=csp.backtracking_search)

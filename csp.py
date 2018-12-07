@@ -680,6 +680,13 @@ def Zebra():
                         neighbors[B].append(A)
 
     def zebra_constraint(A, a, B, b, recurse=0):
+        # file = open('log.txt', 'a')
+        # file.write('------------------------------\n')
+        # file.write('A: ' + str(A) + '\n')
+        # file.write('a: ' + str(a) + '\n')
+        # file.write('B: ' + str(B) + '\n')
+        # file.write('b: ' + str(b) + '\n')
+        # file.close()
         same = (a == b)
         next_to = abs(a - b) == 1
         if A == 'Englishman' and B == 'Red':
@@ -724,11 +731,9 @@ def Zebra():
     return CSP(variables, domains, neighbors, zebra_constraint)
 
 
-# def solve_zebra(algorithm=min_conflicts, **args):
-def solve_zebra(algorithm=min_conflicts):
+def solve_zebra(algorithm=min_conflicts, **args):
     z = Zebra()
-    # ans = algorithm(z, **args)
-    ans = algorithm(z)
+    ans = algorithm(z, **args)
     print('ans:' + str(ans))
     for h in range(1, 6):
         print('House', h, end=' ')

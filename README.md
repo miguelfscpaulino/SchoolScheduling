@@ -6,7 +6,12 @@ Second project for the Artificial Intelligent course in Instituto Superior Técn
 	Formulate the scheduling of classes as a CSP and solve it using an existing backtracking algorithm implementation
 
 ## TODO:
-	Everything
+	- Do S
+	- Define constraints to finish initialize CSP
+	- Can S have a student class that isn't in A?
+	- Test CSP
+	- Define heuristics/??
+	- Otimize
 
 ## Notes:
 	- Otimization idea: loop em que se adiciona outra constraint que é o tempo da ultima aula do dia e vai-se reduzindo/aumentando até arranjar solução válida/óptima.
