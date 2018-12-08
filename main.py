@@ -3,37 +3,69 @@ import sys
 import re
 
 
+def weekdayString2Index(s):
+    if s == 'Mon':
+        return 1
+    elif s == 'Tue':
+        return 2
+    elif s == 'Wed':
+        return 3
+    elif s == 'Thu':
+        return 4
+    elif s == 'Fri':
+        return 5
+    else:
+        return -1
+
+
 class Problem(csp.CSP):
 
     def constraint_function(self, A, a, B, b):
-        print('\nA: ' + str(A))
-        print('\na: ' + str(a))
-        print('\nB: ' + str(B))
-        print('\nb: ' + str(b))
-
-        # same = (a == b)
-        # print('same: ' + str(same))
-        print('-------------------------------------------------------')
+        # print('\nA: ' + str(A))
+        # print('\na: ' + str(a))
+        # print('\nB: ' + str(B))
+        # print('\nb: ' + str(b))
+        #
+        # # same = (a == b)
+        # # print('same: ' + str(same))
+        # print('-------------------------------------------------------')
         # return not same
 
         if a == b:
             return False
 
-        auxA = A.split(',')
+        auxA = A.split('|')[1].split(',')
         auxa = re.split('[,|]', a)
-        auxB = B.split(',')
+        auxB = B.split('|')[1].split(',')
         auxb = re.split('[,|]', b)
-        print('\nauxA: ' + str(auxA))
-        print('\nauxa: ' + str(auxa))
-        print('\nauxB: ' + str(auxB))
-        print('\nauxb: ' + str(auxb))
-        print('-------------------------------------------------------')
+        # print('\nauxA: ' + str(auxA))
+        # print('\nauxa: ' + str(auxa))
+        # print('\nauxB: ' + str(auxB))
+        # print('\nauxb: ' + str(auxb))
+        # print('-------------------------------------------------------')
 
         if auxA[0] == auxB[0]:
             if auxa[0] == auxb[0] and auxa[1] == auxb[1]:
-                    return False
-            if auxA[1] == auxB[1] and auxa[0] == auxb[0]:
-                    return False
+                return False
+            if auxA[1] == auxB[1]:
+                if auxA[2] > auxB[2]:
+                    if weekdayString2Index(auxa[0]) <= weekdayString2Index(auxb[0]):
+                        return False
+                if auxA[2] < auxB[2]:
+                    if weekdayString2Index(auxa[0]) >= weekdayString2Index(auxb[0]):
+                        return False
+
+        auxA = A.split('|')[0].split(',')
+        auxA.remove('')
+        auxB = B.split('|')[0].split(',')
+        auxB.remove('')
+
+        for i in auxA:
+            for j in auxB:
+                if i == j:
+                    if auxa[0] == auxb[0] and auxa[1] == auxb[1]:
+                        return False
+
 
         return True
 
@@ -79,7 +111,27 @@ class Problem(csp.CSP):
             	A = [(item.split(',')[0], item.split(',')[1]) for item in l[1:]]
 
         # variables = T + R + S
-        variables = W
+        T = sorted(T, key=lambda t: int(t.split(',')[1]))
+
+
+        variables = []
+
+        for w in W:
+            aux = '|' + w
+            for a in A:
+                if w.split(',')[0] == a[1]:
+                    aux = a[0] + ',' + aux
+            variables.append(aux)
+
+
+        # for a in A:
+        #     for w in W:
+        #         if w.split(',')[0] == a[1]:
+        #             for var in variables:
+        #                 if a[0] in var.split('|')[0].split(','):
+
+
+        # variables = W
         tr = [t + '|' + r for t in T for r in R]
 
         domains = {}
@@ -117,13 +169,13 @@ class Problem(csp.CSP):
         #             domains[var] = list(range(0, len(W)))
 
 
-        # print('T: ' + str(T))
-        # print('R: ' + str(R))
-        # print('S: ' + str(S))
-        # print('W: ' + str(W))
-        # print('A: ' + str(A))
-        # print('\nvars: ' + str(variables))
-        # print('\ndomains: ' + str(domains))
+        print('T: ' + str(T))
+        print('R: ' + str(R))
+        print('S: ' + str(S))
+        print('W: ' + str(W))
+        print('A: ' + str(A))
+        print('\nvars: ' + str(variables))
+        print('\ndomains: ' + str(domains))
         # print('\nneighbors: ' + str(neighbors))
 
         super().__init__(variables, domains, neighbors, constraints_function)
@@ -135,7 +187,7 @@ class Problem(csp.CSP):
             return
 
         for item in self.result.items():
-            fh.write(item[0] + ' ' + item[1].replace('|', ' ') + '\n')
+            fh.write(item[0].split('|')[1] + ' ' + item[1].replace('|', ' ') + '\n')
 
 
 
