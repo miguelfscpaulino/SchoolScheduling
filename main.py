@@ -1,6 +1,8 @@
 import csp
 import sys
 import re
+import time
+start_time = time.time()
 
 
 def weekdayString2Index(s):
@@ -29,9 +31,9 @@ class Problem(csp.CSP):
         # print('\na: ' + str(a))
         # print('\nB: ' + str(B))
         # print('\nb: ' + str(b))
-        #
-        # # same = (a == b)
-        # # print('same: ' + str(same))
+        # #
+        # # # same = (a == b)
+        # # # print('same: ' + str(same))
         # print('-------------------------------------------------------')
         # return not same
 
@@ -72,7 +74,7 @@ class Problem(csp.CSP):
         for i in auxA:
             for j in auxB:
                 if i == j and auxa[0] == auxb[0] and auxa[1] == auxb[1]:
-                        return False
+                    return False
 
         return True
 
@@ -142,14 +144,14 @@ class Problem(csp.CSP):
         # Constraints function
         constraints_function = self.constraint_function
 
-        print('T: ' + str(T))
-        print('R: ' + str(R))
-        print('S: ' + str(S))
-        print('W: ' + str(W))
-        print('A: ' + str(A))
-        print('\nvars: ' + str(variables))
-        print('\ndomains: ' + str(domains))
-        print('\nneighbors: ' + str(neighbors))
+        # print('T: ' + str(T))
+        # print('R: ' + str(R))
+        # print('S: ' + str(S))
+        # print('W: ' + str(W))
+        # print('A: ' + str(A))
+        # print('\nvars: ' + str(variables))
+        # print('\ndomains: ' + str(domains))
+        # print('\nneighbors: ' + str(neighbors))
 
         # CSP class initialization
         super().__init__(variables, domains, neighbors, constraints_function)
@@ -201,3 +203,5 @@ if __name__ == '__main__':
 
     inputfileID.close()
     outputfileID.close()
+
+    print("\n\nMy program took " + str(time.time() - start_time) + " to run")
