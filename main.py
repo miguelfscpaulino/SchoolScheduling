@@ -1,8 +1,8 @@
 import csp
 import sys
 import re
-import time
-start_time = time.time()
+# import time
+# start_time = time.time()
 
 
 def weekdayString2Index(s):
@@ -121,7 +121,11 @@ class Problem(csp.CSP):
             variables.append(aux)
 
         # Sorts classes times by the class hour (ascending)
+        # print('T: ' + str(T))
+        # T = sorted(T, key=lambda t: weekdayString2Index(t.split(',')[0]))
+        # print('T: ' + str(T))
         T = sorted(T, key=lambda t: int(t.split(',')[1]))
+        # print('T: ' + str(T))
 
         # Defines domains of variables as string with combinations of classes
         # times and classrooms
@@ -172,36 +176,130 @@ class Problem(csp.CSP):
 def solve(input_file, output_file):
     ''' Function that solves the Schedule Problem.'''
 
+
+    def costCalculator(result):
+        cost = -1
+        for (var, val) in result.items():
+            auxval = re.split('[,|]', val)
+            # print('auxval: ' + str(auxval))
+            if int(auxval[1]) > cost:
+                cost = int(auxval[1])
+        return cost
+
     # Initalizes the CSP from input file
     p = Problem(input_file)
 
     # Solves CSP
-    p.result = csp.backtracking_search(p)
-    print('\nresult:' + str(p.result))
+    # p.result = csp.backtracking_search(p, select_unassigned_variable=csp.mrv, order_domain_values=csp.lcv, inference=csp.mac)
+    p.result = csp.backtracking_search(p, select_unassigned_variable=csp.mrv, order_domain_values=csp.lcv, inference=csp.forward_checking)
+    if not p.result:
+    # Writes solution to output file
+        p.dump_solution(output_file)
+        return
 
+    result_prev = p.result  #CHECK COPY - FAIL ?!
+    cost = costCalculator(p.result)
+
+    # print('\nPRIMEIRO result:' + str(p.result))
+    # print('\nPRIMEIRO Cost: ' + str(costCalculator(p.result)))
+    # print('------------------------------------------------')
+
+    # result = result_prev
+    while True:
+        for item in p.domains:
+            auxdomains = []
+            for item2 in p.domains[item]:
+                aux = re.split('[,|]', item2)
+                # print('aux: ' + str(aux))
+                if int(aux[1]) >= cost:
+                    # print('\n\n1: ' + str(p.domains[item]))
+                    # print('2: ' + str(item2))
+                    auxdomains.append(item2)
+                    # print('3: ' + str(p.domains[item]))
+                # print('\nauxdomains: ' + str(auxdomains))
+            for i in range(len(auxdomains)):
+                p.domains[item].remove(auxdomains[i])
+
+        p.curr_domains = None
+        # p.result = csp.backtracking_search(p, select_unassigned_variable=csp.mrv, order_domain_values=csp.lcv, inference=csp.mac)
+        p.result = csp.backtracking_search(p, select_unassigned_variable=csp.mrv, order_domain_values=csp.lcv, inference=csp.forward_checking)
+        # print('\nresult:' + str(p.result))
+        if not p.result:
+            break
+        # print('\ncost: ' + str(costCalculator(p.result)))
+        result_prev = p.result  #CHECK COPY - FAIL ?!
+        cost = costCalculator(p.result)
+
+
+
+
+
+    p.result = result_prev
+
+    # print('------------------------------------------------')
+    # print('\nResult FINAL:' + str(p.result))
+    # print('\nCost FINAL: ' + str(costCalculator(p.result)))
     # Writes solution to output file
     p.dump_solution(output_file)
 
 
 
-if __name__ == '__main__':
-    ''' Main function used to test program.'''
 
-    # Open input and output files
-    try:
-        inputfileID = open(sys.argv[1], "r")
-        outputfileID = open(sys.argv[2], "w")
-    except IndexError:
-        print('Error: Filenames not provided or invalid open/read')
-        sys.exit()
-    except IOError:
-        print("Error: couldn't open provided files")
-        sys.exit()
+    # p.result = csp.backtracking_search(p, select_unassigned_variable=csp.mrv, order_domain_values=csp.lcv, inference=csp.forward_checking)
+    # # p.result = csp.backtracking_search(p, select_unassigned_variable=csp.mrv, inference=csp.forward_checking)
+    # print('\nresult:' + str(p.result))
+    # if p.result:
+    #
+    #     # print('\nresult_items: ' + str(p.result.items()))
+    #
+    #     cost = costCalculator(p.result)
+    #     print('\ncost: ' + str(cost))
+    #
+    #     result_prev = p.result
+    #     cost_prev = cost
+    #
+    #     for item in p.domains:
+    #         # print('i: ' + str(item))
+    #         # print('jsvas: ' + str(p.domains[item]))
+    #         for item2 in p.domains[item]:
+    #             aux = re.split('[,|]', item2)
+    #             if int(aux[1]) >= cost:
+    #                 p.domains[item].remove(item2)
+    #     p.curr_domains = None
+    #     print('p.domains: ' + str(p.domains))
+    #
+    #     p.result = csp.backtracking_search(p, select_unassigned_variable=csp.mrv, order_domain_values=csp.lcv, inference=csp.forward_checking)
+    #     # p.result = csp.backtracking_search(p, select_unassigned_variable=csp.mrv, inference=csp.forward_checking)
+    #     print('\nresult:' + str(p.result))
+    #     if p.result:
+    #         cost = costCalculator(p.result)
+    #         print('\ncost: ' + str(cost))
+    #
+    #
+    #
+    # # Writes solution to output file
+    # p.dump_solution(output_file)
 
-    # Solve schedule
-    solve(inputfileID, outputfileID)
 
-    inputfileID.close()
-    outputfileID.close()
 
-    print("\n\nMy program took " + str(time.time() - start_time) + " to run")
+# if __name__ == '__main__':
+#     ''' Main function used to test program.'''
+#
+#     # Open input and output files
+#     try:
+#         inputfileID = open(sys.argv[1], "r")
+#         outputfileID = open(sys.argv[2], "w")
+#     except IndexError:
+#         print('Error: Filenames not provided or invalid open/read')
+#         sys.exit()
+#     except IOError:
+#         print("Error: couldn't open provided files")
+#         sys.exit()
+#
+#     # Solve schedule
+#     solve(inputfileID, outputfileID)
+#
+#     inputfileID.close()
+#     outputfileID.close()
+#
+#     print("\n\nMy program took " + str(time.time() - start_time) + " to run")

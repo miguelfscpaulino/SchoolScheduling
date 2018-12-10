@@ -269,6 +269,11 @@ def backtracking_search(csp,
         csp.unassign(var, assignment)
         return None
 
+    # print('-------------------------------------')
+    # print('domains: ' + str(csp.domains))
+    # print('<>><<<<<<')
+    # print('curr_domains: ' + str(csp.curr_domains))
+    # print('-------------------------------------')
     result = backtrack({})
     assert result is None or csp.goal_test(result)
     return result
