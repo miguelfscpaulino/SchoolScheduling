@@ -1,8 +1,8 @@
 import csp
 import sys
 import re
-# import time
-# start_time = time.time()
+import time
+start_time = time.time()
 
 
 def weekdayString2Index(s):
@@ -126,6 +126,8 @@ class Problem(csp.CSP):
         # print('T: ' + str(T))
         T = sorted(T, key=lambda t: int(t.split(',')[1]))
         # print('T: ' + str(T))
+        self.first_hour = int(T[0].split(',')[1])
+        # print('1st hour: ' + str(self.first_hour))
 
         # Defines domains of variables as string with combinations of classes
         # times and classrooms
@@ -200,12 +202,13 @@ def solve(input_file, output_file):
     result_prev = p.result  #CHECK COPY - FAIL ?!
     cost = costCalculator(p.result)
 
-    # print('\nPRIMEIRO result:' + str(p.result))
-    # print('\nPRIMEIRO Cost: ' + str(costCalculator(p.result)))
-    # print('------------------------------------------------')
+    print('\nPRIMEIRO result:' + str(p.result))
+    print('\nPRIMEIRO Cost: ' + str(costCalculator(p.result)))
+    print('------------------------------------------------')
 
     # result = result_prev
-    while True:
+    # while True:
+    while cost > p.first_hour:
         for item in p.domains:
             auxdomains = []
             for item2 in p.domains[item]:
@@ -223,10 +226,10 @@ def solve(input_file, output_file):
         p.curr_domains = None
         # p.result = csp.backtracking_search(p, select_unassigned_variable=csp.mrv, order_domain_values=csp.lcv, inference=csp.mac)
         p.result = csp.backtracking_search(p, select_unassigned_variable=csp.mrv, order_domain_values=csp.lcv, inference=csp.forward_checking)
-        # print('\nresult:' + str(p.result))
+        print('\nresult:' + str(p.result))
         if not p.result:
             break
-        # print('\ncost: ' + str(costCalculator(p.result)))
+        print('\ncost: ' + str(costCalculator(p.result)))
         result_prev = p.result  #CHECK COPY - FAIL ?!
         cost = costCalculator(p.result)
 
@@ -236,9 +239,9 @@ def solve(input_file, output_file):
 
     p.result = result_prev
 
-    # print('------------------------------------------------')
-    # print('\nResult FINAL:' + str(p.result))
-    # print('\nCost FINAL: ' + str(costCalculator(p.result)))
+    print('------------------------------------------------')
+    print('\nResult FINAL:' + str(p.result))
+    print('\nCost FINAL: ' + str(costCalculator(p.result)))
     # Writes solution to output file
     p.dump_solution(output_file)
 
@@ -282,24 +285,24 @@ def solve(input_file, output_file):
 
 
 
-# if __name__ == '__main__':
-#     ''' Main function used to test program.'''
-#
-#     # Open input and output files
-#     try:
-#         inputfileID = open(sys.argv[1], "r")
-#         outputfileID = open(sys.argv[2], "w")
-#     except IndexError:
-#         print('Error: Filenames not provided or invalid open/read')
-#         sys.exit()
-#     except IOError:
-#         print("Error: couldn't open provided files")
-#         sys.exit()
-#
-#     # Solve schedule
-#     solve(inputfileID, outputfileID)
-#
-#     inputfileID.close()
-#     outputfileID.close()
-#
-#     print("\n\nMy program took " + str(time.time() - start_time) + " to run")
+if __name__ == '__main__':
+    ''' Main function used to test program.'''
+
+    # Open input and output files
+    try:
+        inputfileID = open(sys.argv[1], "r")
+        outputfileID = open(sys.argv[2], "w")
+    except IndexError:
+        print('Error: Filenames not provided or invalid open/read')
+        sys.exit()
+    except IOError:
+        print("Error: couldn't open provided files")
+        sys.exit()
+
+    # Solve schedule
+    solve(inputfileID, outputfileID)
+
+    inputfileID.close()
+    outputfileID.close()
+
+    print("\n\nMy program took " + str(time.time() - start_time) + " to run")
