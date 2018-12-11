@@ -2,10 +2,6 @@ import csp
 import sys
 import re
 
-# Timer
-import time
-start_time = time.time()
-
 
 def weekdayString2Index(s):
     '''Converts weekdays string to a number to be able to compare them.'''
@@ -207,30 +203,3 @@ def solve(input_file, output_file):
 
     # Writes solution to output file
     p.dump_solution(output_file)
-
-    print('\nsolution:\n' + str(p.result))
-    print('\ncost: ' + str(cost))
-
-
-if __name__ == '__main__':
-    ''' Main function used to test program.'''
-
-    # Open input and output files
-    try:
-        inputfileID = open(sys.argv[1], "r")
-        outputfileID = open(sys.argv[2], "w")
-    except IndexError:
-        print('Error: Filenames not provided or invalid open/read')
-        sys.exit()
-    except IOError:
-        print("Error: couldn't open provided files")
-        sys.exit()
-
-    # Solve schedule
-    solve(inputfileID, outputfileID)
-
-    inputfileID.close()
-    outputfileID.close()
-
-    # Timer
-    print("\nMy program took " + str(time.time() - start_time) + " to run")
