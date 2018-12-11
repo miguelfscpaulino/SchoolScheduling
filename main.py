@@ -39,6 +39,11 @@ class Problem(csp.CSP):
         auxB = B.split('|')[1].split(',')
         auxb = re.split('[,|]', b)
 
+        # The i-th class of a couse and kind in the week cannot happen at the
+        # j days of the week when j<i. (ex: IASD,T,2 cannot be on Mon)
+        if weekdayString2Index(auxa[0]) < int(auxA[2]) or weekdayString2Index(auxb[0]) < int(auxB[2]):
+            return False
+
         # Compares same course's classes
         if auxA[0] == auxB[0]:
             # They cannot happen at the same time
@@ -122,6 +127,13 @@ class Problem(csp.CSP):
         # CSP class initialization
         super().__init__(variables, domains, neighbors, constraints_function)
 
+        # print('\nvars:')
+        # print(str(variables))
+        # print('\ndomains:')
+        # print(str(domains))
+        # print('\nneighbors:')
+        # print(str(neighbors))
+
 
     def dump_solution(self, fh):
         '''Writes solution to opened file object fh'''
@@ -160,6 +172,10 @@ def solve(input_file, output_file):
     # Solves CSP
     p.result = csp.backtracking_search(p, select_unassigned_variable=csp.mrv, order_domain_values=csp.lcv, inference=csp.forward_checking)
 
+    print('\n-------------------------------------------')
+    print('1ST SOL:')
+    print(str(p.result))
+
     # Infeasible problem (No solution)
     if not p.result:
         # Writes solution to output file
@@ -171,6 +187,10 @@ def solve(input_file, output_file):
 
     # Calculates cost of first solution
     cost = costCalculator(p.result)
+
+    print('1ST COST: ' + str(cost))
+    print('-------------------------------------------\n')
+
 
     # Cycle where the csp is solved until the minimum cost if found where the
     # problem is still feasible
@@ -191,6 +211,9 @@ def solve(input_file, output_file):
         # Solves CSP
         p.result = csp.backtracking_search(p, select_unassigned_variable=csp.mrv, order_domain_values=csp.lcv, inference=csp.forward_checking)
 
+        print('sol:')
+        print(str(p.result))
+
         # Leaves cycle when it reachs an infeasible problem.
         # The previous solution was the best one
         if not p.result:
@@ -202,14 +225,17 @@ def solve(input_file, output_file):
         # Updates cost
         cost = costCalculator(p.result)
 
+        print('cost: ' + str(cost))
+
     # Stores the best solution
     p.result = result_prev
 
     # Writes solution to output file
     p.dump_solution(output_file)
 
-    print('\nsolution:\n' + str(p.result))
-    print('\ncost: ' + str(cost))
+    print('\n-------------------------------------------')
+    print('\nFINAL solution:\n' + str(p.result))
+    print('\nFINAL cost: ' + str(cost))
 
 
 if __name__ == '__main__':

@@ -35,6 +35,11 @@ class Problem(csp.CSP):
         auxB = B.split('|')[1].split(',')
         auxb = re.split('[,|]', b)
 
+        # The i-th class of a couse and kind in the week cannot happen at the
+        # j days of the week when j<i. (ex: IASD,T,2 cannot be on Mon)
+        if weekdayString2Index(auxa[0]) < int(auxA[2]) or weekdayString2Index(auxb[0]) < int(auxB[2]):
+            return False
+
         # Compares same course's classes
         if auxA[0] == auxB[0]:
             # They cannot happen at the same time
