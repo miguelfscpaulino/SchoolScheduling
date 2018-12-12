@@ -88,6 +88,18 @@ class Problem(csp.CSP):
             elif l[0] == 'A':
             	A = [(item.split(',')[0], item.split(',')[1]) for item in l[1:]]
 
+        # Stores as a varible the maximum number of different classes the
+        # student classes have
+        auxA = {}
+        for a in A:
+            for w in W:
+                if a[1] == w.split(',')[0]:
+                    if a[0] in auxA:
+                        auxA[a[0]] += 1
+                    else:
+                        auxA[a[0]] = 1
+        self.max_diff_class = max(auxA.values())
+
         # Defines CSP variables as strings with classes and student classes that
         # take the correspondent class
         variables = []
@@ -103,6 +115,16 @@ class Problem(csp.CSP):
 
         # Stores first hour of the schedule
         self.first_hour = int(T[0].split(',')[1])
+
+        # Stores as a variable a dictionary with the hours of the classes and
+        # how many times a week that hour is available
+        self.times = {}
+        for t in T:
+            ti = int(t.split(',')[1])
+            if ti in self.times:
+                self.times[ti] += 1
+            else:
+                self.times[ti] = 1
 
         # Defines domains of variables as string with combinations of classes
         # times and classrooms
@@ -172,9 +194,9 @@ def solve(input_file, output_file):
     # Solves CSP
     p.result = csp.backtracking_search(p, select_unassigned_variable=csp.mrv, order_domain_values=csp.lcv, inference=csp.forward_checking)
 
-    print('\n-------------------------------------------')
-    print('1ST SOL:')
-    print(str(p.result))
+    # print('\n-------------------------------------------')
+    # print('1ST SOL:')
+    # print(str(p.result))
 
     # Infeasible problem (No solution)
     if not p.result:
@@ -188,13 +210,29 @@ def solve(input_file, output_file):
     # Calculates cost of first solution
     cost = costCalculator(p.result)
 
-    print('1ST COST: ' + str(cost))
-    print('-------------------------------------------\n')
-
+    # Variable with the hours of the classes and how many times a week that hour
+    # is available for the first problem
+    times = p.times
+    #
+    # print('1ST COST: ' + str(cost))
+    # print('1ST times: ' + str(times))
+    # print('-------------------------------------------\n')
 
     # Cycle where the csp is solved until the minimum cost if found where the
     # problem is still feasible
     while cost > p.first_hour:
+
+        # Removes from the dictionary with the hours of the classes and how many
+        # times a week that hour is avilable all the hours bigger or equal than
+        # the previous cost
+        times = {t : times[t] for t in times if t < cost}
+        # print('times: ' + str(times))
+        # print('sum_times: ' + str(sum(times.values())))
+
+        # If there's available less number of different hours for classes than
+        # the number of different classes the CSP problem will be infeasible
+        if sum(times.values()) < p.max_diff_class:
+            break
 
         # Removes from the domains all the values with the class hour bigger
         # than the previous cost
@@ -211,8 +249,8 @@ def solve(input_file, output_file):
         # Solves CSP
         p.result = csp.backtracking_search(p, select_unassigned_variable=csp.mrv, order_domain_values=csp.lcv, inference=csp.forward_checking)
 
-        print('sol:')
-        print(str(p.result))
+        # print('sol:')
+        # print(str(p.result))
 
         # Leaves cycle when it reachs an infeasible problem.
         # The previous solution was the best one
@@ -225,7 +263,7 @@ def solve(input_file, output_file):
         # Updates cost
         cost = costCalculator(p.result)
 
-        print('cost: ' + str(cost))
+        # print('cost: ' + str(cost))
 
     # Stores the best solution
     p.result = result_prev
