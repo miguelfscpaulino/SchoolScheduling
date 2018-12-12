@@ -84,6 +84,18 @@ class Problem(csp.CSP):
             elif l[0] == 'A':
             	A = [(item.split(',')[0], item.split(',')[1]) for item in l[1:]]
 
+        # Stores as a varible the maximum number of different classes the
+        # student classes have
+        auxA = {}
+        for a in A:
+            for w in W:
+                if a[1] == w.split(',')[0]:
+                    if a[0] in auxA:
+                        auxA[a[0]] += 1
+                    else:
+                        auxA[a[0]] = 1
+        self.max_diff_class = max(auxA.values())
+
         # Defines CSP variables as strings with classes and student classes that
         # take the correspondent class
         variables = []
@@ -99,6 +111,16 @@ class Problem(csp.CSP):
 
         # Stores first hour of the schedule
         self.first_hour = int(T[0].split(',')[1])
+
+        # Stores as a variable a dictionary with the hours of the classes and
+        # how many times a week that hour is available
+        self.times = {}
+        for t in T:
+            ti = int(t.split(',')[1])
+            if ti in self.times:
+                self.times[ti] += 1
+            else:
+                self.times[ti] = 1
 
         # Defines domains of variables as string with combinations of classes
         # times and classrooms
@@ -173,9 +195,23 @@ def solve(input_file, output_file):
     # Calculates cost of first solution
     cost = costCalculator(p.result)
 
+    # Variable with the hours of the classes and how many times a week that hour
+    # is available for the first problem
+    times = p.times
+
     # Cycle where the csp is solved until the minimum cost if found where the
     # problem is still feasible
     while cost > p.first_hour:
+
+        # Removes from the dictionary with the hours of the classes and how many
+        # times a week that hour is avilable all the hours bigger or equal than
+        # the previous cost
+        times = {t : times[t] for t in times if t < cost}
+
+        # If there's available less number of different hours for classes than
+        # the number of different classes the CSP problem will be infeasible
+        if sum(times.values()) < p.max_diff_class:
+            break
 
         # Removes from the domains all the values with the class hour bigger
         # than the previous cost

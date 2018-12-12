@@ -149,10 +149,10 @@ class Problem(csp.CSP):
         # CSP class initialization
         super().__init__(variables, domains, neighbors, constraints_function)
 
-        # print('\nvars:')
-        # print(str(variables))
-        # print('\ndomains:')
-        # print(str(domains))
+        print('\nvars:')
+        print(str(variables))
+        print('\ndomains:')
+        print(str(domains))
         # print('\nneighbors:')
         # print(str(neighbors))
 
