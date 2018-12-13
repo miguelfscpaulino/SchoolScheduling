@@ -180,8 +180,21 @@ def solve(input_file, output_file):
     # Initalizes the CSP from input file
     p = Problem(input_file)
 
+    # Variable with the hours of the classes and how many times a week that hour
+    # is available for the first problem
+    times = p.times
+
+    # If there's available less number of different hours for classes than
+    # the number of different classes the CSP problem will be infeasible
+    if sum(times.values()) < p.max_diff_class:
+        p.result = None
+        # Writes solution to output file
+        p.dump_solution(output_file)
+        return
+
     # Solves CSP
     p.result = csp.backtracking_search(p, select_unassigned_variable=csp.mrv, order_domain_values=csp.lcv, inference=csp.forward_checking)
+    # p.result = csp.backtracking_search(p, select_unassigned_variable=csp.mrv, order_domain_values=csp.lcv, inference=csp.mac)
 
     # Infeasible problem (No solution)
     if not p.result:
@@ -194,10 +207,6 @@ def solve(input_file, output_file):
 
     # Calculates cost of first solution
     cost = costCalculator(p.result)
-
-    # Variable with the hours of the classes and how many times a week that hour
-    # is available for the first problem
-    times = p.times
 
     # Cycle where the csp is solved until the minimum cost if found where the
     # problem is still feasible
